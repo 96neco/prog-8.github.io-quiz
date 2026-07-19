@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>入力クイズ</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    text-align:center;
+    margin-top:80px;
+}
+
+#question{
+    font-size:40px;
+    margin-bottom:20px;
+}
+
+input{
+    font-size:28px;
+    padding:10px;
+    width:300px;
+}
+
+button{
+    font-size:24px;
+    padding:10px 20px;
+    margin-left:10px;
+}
+
+#result{
+    margin-top:20px;
+    font-size:30px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>入力クイズ</h1>
+
+<div id="question"></div>
+
+<input type="text" id="answer" autocomplete="off">
+<button onclick="check()">判定</button>
+
+<div id="result"></div>
+
+<script>
+
+const questions = [
+    "りんご",
+    "みかん",
+    "ぶどう",
+    "ばなな",
+    "めろん"
+];
+
+let current;
+
+nextQuestion();
+
+function nextQuestion(){
+    current = questions[Math.floor(Math.random()*questions.length)];
+    document.getElementById("question").textContent = current;
+    document.getElementById("answer").value = "";
+    document.getElementById("result").textContent = "";
+    document.getElementById("answer").focus();
+}
+
+function check(){
+
+    const input = document.getElementById("answer").value;
+
+    if(input === current){
+        document.getElementById("result").textContent = "⭕ 正解！";
+
+        setTimeout(nextQuestion,1000);
+
+    }else{
+        document.getElementById("result").textContent = "❌ 不正解";
+    }
+}
+
+// Enterキーでも判定
+document.getElementById("answer").addEventListener("keydown",function(e){
+    if(e.key==="Enter"){
+        check();
+    }
+});
+
+</script>
+
+</body>
+</html>
