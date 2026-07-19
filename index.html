@@ -8,86 +8,147 @@
 body{
     font-family:sans-serif;
     text-align:center;
-    margin-top:80px;
+    margin-top:60px;
 }
 
 #question{
     font-size:40px;
-    margin-bottom:20px;
+    margin:30px;
 }
 
 input{
-    font-size:28px;
-    padding:10px;
+    font-size:26px;
     width:300px;
+    padding:10px;
 }
 
 button{
-    font-size:24px;
+    font-size:22px;
     padding:10px 20px;
-    margin-left:10px;
+    margin:15px;
 }
 
 #result{
+    font-size:28px;
     margin-top:20px;
-    font-size:30px;
-    font-weight:bold;
+    white-space:pre-line;
+}
+
+#score{
+    margin-top:20px;
+    font-size:20px;
 }
 </style>
-</head>
 
+</head>
 <body>
 
 <h1>入力クイズ</h1>
 
 <div id="question"></div>
 
-<input type="text" id="answer" autocomplete="off">
-<button onclick="check()">判定</button>
+<input type="text" id="answer">
+
+<br>
+
+<button id="judgeBtn" onclick="check()">判定</button>
+
+<button id="nextBtn" onclick="nextQuestion()" style="display:none;">
+次へ
+</button>
 
 <div id="result"></div>
+
+<div id="score"></div>
 
 <script>
 
 const questions = [
-    "りんご",
-    "みかん",
-    "ぶどう",
-    "ばなな",
-    "めろん"
+    {question:"apple",answer:"りんご"},
+    {question:"dog",answer:"いぬ"},
+    {question:"cat",answer:"ねこ"},
+    {question:"bird",answer:"とり"},
+    {question:"orange",answer:"みかん"},
+    {question:"grape",answer:"ぶどう"},
+    {question:"banana",answer:"ばなな"},
+    {question:"melon",answer:"めろん"}
 ];
 
+let used = [];
 let current;
+let currentIndex;
+let correctCount = 0;
 
 nextQuestion();
 
 function nextQuestion(){
-    current = questions[Math.floor(Math.random()*questions.length)];
-    document.getElementById("question").textContent = current;
-    document.getElementById("answer").value = "";
-    document.getElementById("result").textContent = "";
+
+    // 全問終了
+    if(used.length === questions.length){
+
+        document.getElementById("question").textContent="終了！";
+
+        document.getElementById("answer").style.display="none";
+        document.getElementById("judgeBtn").style.display="none";
+        document.getElementById("nextBtn").style.display="none";
+
+        document.getElementById("result").textContent=
+            "あなたの得点は\n"+correctCount+" / "+questions.length+" 点です！";
+
+        return;
+    }
+
+    do{
+        currentIndex=Math.floor(Math.random()*questions.length);
+    }while(used.includes(currentIndex));
+
+    used.push(currentIndex);
+
+    current=questions[currentIndex];
+
+    document.getElementById("question").textContent=current.question;
+    document.getElementById("answer").value="";
+    document.getElementById("result").textContent="";
+
+    document.getElementById("judgeBtn").disabled=false;
+    document.getElementById("nextBtn").style.display="none";
+
+    document.getElementById("score").textContent=
+        "正解数："+correctCount+" / "+used.length;
+
     document.getElementById("answer").focus();
 }
 
 function check(){
 
-    const input = document.getElementById("answer").value;
+    const input=document.getElementById("answer").value.trim();
 
-    if(input === current){
-        document.getElementById("result").textContent = "⭕ 正解！";
+    if(input===current.answer){
 
-        setTimeout(nextQuestion,1000);
+        correctCount++;
+
+        document.getElementById("result").textContent=
+            "⭕ 正解！";
 
     }else{
-        document.getElementById("result").textContent = "❌ 不正解";
+
+        document.getElementById("result").textContent=
+            "❌ 不正解\n\n正解は「"+current.answer+"」です。";
     }
+
+    document.getElementById("judgeBtn").disabled=true;
+    document.getElementById("nextBtn").style.display="inline-block";
+
+    document.getElementById("score").textContent=
+        "正解数："+correctCount+" / "+used.length;
 }
 
-// Enterキーでも判定
 document.getElementById("answer").addEventListener("keydown",function(e){
-    if(e.key==="Enter"){
+
+    if(e.key==="Enter" && !document.getElementById("judgeBtn").disabled){
         check();
     }
+
 });
 
 </script>
