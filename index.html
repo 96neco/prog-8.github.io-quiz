@@ -45,7 +45,15 @@ button{
 
 <h1>書いてあることをそのまま入力するだけのクイズ</h1>
 
-<div id="question"></div>
+<div id="question"
+    oncontextmenu="return false;"
+     oncopy="return false;"
+     style="
+        user-select:none;
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+    "></div>
 
 <input type="text" id="answer">
 
