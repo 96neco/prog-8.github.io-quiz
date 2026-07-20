@@ -14,6 +14,10 @@ body{
 #question{
     font-size:40px;
     margin:30px;
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
 }
 
 input{
@@ -32,6 +36,10 @@ button{
     font-size:28px;
     margin-top:20px;
     white-space:pre-line;
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
 }
 
 #score{
@@ -46,18 +54,19 @@ button{
 <h1>書いてあることをそのまま入力するだけのクイズ</h1>
 
 <div id="question"
-    oncontextmenu="return false;"
+     draggable="false"
+     ondragstart="return false;"
+     oncontextmenu="return false;"
      oncopy="return false;"
-     style="
-        user-select:none;
-        -webkit-user-select:none;
-        -moz-user-select:none;
-        -ms-user-select:none;
-    "></div>
+     onselectstart="return false;"></div>
 
-<input type="text" id="answer"
+<input
     type="text"
     id="answer"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
     onpaste="return false;"
     ondrop="return false;">
 
@@ -69,7 +78,10 @@ button{
 次へ
 </button>
 
-<div id="result"></div>
+<div id="result"
+     oncontextmenu="return false;"
+     oncopy="return false;"
+     onselectstart="return false;"></div>
 
 <div id="score"></div>
 
@@ -95,7 +107,6 @@ nextQuestion();
 
 function nextQuestion(){
 
-    // 全問終了
     if(used.length === questions.length){
 
         document.getElementById("question").textContent="終了！";
@@ -156,21 +167,42 @@ function check(){
 }
 
 document.getElementById("answer").addEventListener("keydown",function(e){
-    
-    if(
-        (e.ctrlKey && (e.key === "v" || e.key === "V")) ||
-        (e.ctrlKey && e.shiftKey && (e.key === "v" || e.key === "V"))
-    ){
+
+    // Ctrl+V
+    if(e.ctrlKey && (e.key==="v" || e.key==="V")){
         e.preventDefault();
         return;
     }
 
-    if(e.key === "Enter" &&
+    // Ctrl+Shift+V
+    if(e.ctrlKey && e.shiftKey &&
+       (e.key==="v" || e.key==="V")){
+        e.preventDefault();
+        return;
+    }
+
+    // Shift+Insert
+    if(e.shiftKey && e.key==="Insert"){
+        e.preventDefault();
+        return;
+    }
+
+    // Enterで判定
+    if(e.key==="Enter" &&
        !document.getElementById("judgeBtn").disabled){
         check();
     }
 
+});
 
+// ドキュメント全体のコピーを禁止
+document.addEventListener("copy", function(e){
+    e.preventDefault();
+});
+
+// ドラッグ開始を禁止
+document.addEventListener("dragstart", function(e){
+    e.preventDefault();
 });
 
 </script>
